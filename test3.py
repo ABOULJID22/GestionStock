@@ -96,9 +96,9 @@ window.iconphoto(True, icon)
 fullname = get_fullname_from_database()
 # Mettre à jour le titre de la fenêtre
 if fullname:
-    window.title('Welcome ' + fullname)
+    window.title('Bienvenue ' + fullname)
 else:
-    window.title('Welcome')
+    window.title('Bienvenue')
 # Window Icon Photo
 
 
@@ -162,6 +162,7 @@ def login_user():
 
 
 
+
 design_frame1 = Listbox(LoginPage, bg='#0c71b9', width=115, height=50, highlightthickness=0, borderwidth=0)
 design_frame1.place(x=0, y=0)
 
@@ -207,9 +208,9 @@ SignUp_button = Button(LoginPage, text='Sign up', font=("yu gothic ui bold", 12)
                        command=lambda: show_frame(RegistrationPage), borderwidth=0, activebackground='#1b87d2', cursor='hand2')
 SignUp_button.place(x=1100, y=175)
 
-# ===== Welcome Label ==============
-welcome_label = Label(design_frame4, text='Welcome Back!', font=('Arial', 20, 'bold'), bg='#f8f8f8',fg='#1b87d2')
-welcome_label.place(x=130, y=15)
+# ===== Bienvenue Label ==============
+Bienvenue_label = Label(design_frame4, text=' Bienvenue !', font=('Arial', 20, 'bold'), bg='#f8f8f8',fg='#1b87d2')
+Bienvenue_label.place(x=200, y=15)
 
 
 # ======= top Login Button =========
@@ -219,7 +220,20 @@ login_button.place(x=845,  y=175)
 
 login_line = Canvas(LoginPage, width=60, height=5, bg='#1b87d2')
 login_line.place(x=840, y=203)
+#/---------------------------verifier signup------------------------
+connection = sqlite3.connect(db_file_path)
+cursor = connection.cursor()
+# Vérifier s'il existe déjà un utilisateur dans la base de données
+cursor.execute("SELECT COUNT(*) FROM user")
+user_count = cursor.fetchone()[0]
 
+# Si aucun utilisateur n'existe, afficher le bouton d'inscription, sinon ne pas l'afficher
+if user_count == 0:
+    msg_label = tk.Label(design_frame4, text="Vous utilisez l'application pour la première fois. Veuillez vous inscrire.", font=('Arial', 8, 'bold'), bg='#f8f8f8')
+    msg_label.place(x=20, y=450)
+    SignUp_button2 = Button(LoginPage, text='Sign up', font=("yu gothic ui bold", 12), bg='#f8f8f8',fg='#1b87d2',
+                        command=lambda: show_frame(RegistrationPage), borderwidth=0, activebackground='#1b87d2', cursor='hand2')
+    SignUp_button2.place(x=1090, y=550)
 # ==== LOGIN  down button ============
 loginBtn1 = Button(design_frame4, fg='#f8f8f8', text='Login', bg='#1b87d2', font=("yu gothic ui bold", 15),
                    cursor='hand2',command=login_user, activebackground='#1b87d2')
@@ -345,7 +359,7 @@ def forgot_password():
     update_pass.place(x=40, y=240, width=256, height=50)
 
 # Bouton "Forgot password"
-forgotPassword = Button(design_frame4, text='Forgot password', font=("yu gothic ui", 8, "bold underline"), bg='#f8f8f8',
+forgotPassword = Button(design_frame4, text='Forgot password',fg='blue', font=("yu gothic ui", 8, "bold underline"), bg='#f8f8f8',
                         borderwidth=0, activebackground='#f8f8f8', command=forgot_password, cursor="hand2")
 forgotPassword.place(x=290, y=290)
 
@@ -355,6 +369,9 @@ forgotPassword.place(x=290, y=290)
 # =====================================================================================================================
 # =====================================================================================================================
 def register_user():
+    if not checkButton_var.get():
+        messagebox.showerror("Erreur", "Veuillez confirmer la police avant de vous inscrire.")
+        return
     # Get user input from entry fields
     full_name = name_entry.get()
     email = email_entry.get()
@@ -395,7 +412,6 @@ def register_user():
 # Supposons que vous avez déjà un curseur de base de données nommé "cursor"
 connection = sqlite3.connect(db_file_path)
 cursor = connection.cursor()
-
 # Vérifier s'il existe déjà un utilisateur dans la base de données
 cursor.execute("SELECT COUNT(*) FROM user")
 user_count = cursor.fetchone()[0]
@@ -403,6 +419,7 @@ user_count = cursor.fetchone()[0]
 # Si aucun utilisateur n'existe, afficher le bouton d'inscription, sinon ne pas l'afficher
 if user_count == 0:
     SignUp_button.place(x=1100, y=175)
+    
 else:
     SignUp_button.place_forget()
 
@@ -442,10 +459,12 @@ password_label.place(x=280, y=265)
 
 
 def password_command2():
-    if password_entry.cget('show') == '•':
+    if password_entry.cget('show') == '•' or confirmPassword_entry.cget('show') == '•':
         password_entry.config(show='')
+        confirmPassword_entry.config(show='')
     else:
         password_entry.config(show='•')
+        confirmPassword_entry.config(show='•')
 
 
 checkButton = Checkbutton(design_frame8, bg='#f8f8f8', command=password_command2, text='show password')
@@ -470,9 +489,19 @@ SignUp_button.place(x=1100, y=175)
 SignUp_line = Canvas(RegistrationPage, width=60, height=5, bg='#1b87d2')
 SignUp_line.place(x=1100, y=203)
 
-# ===== Welcome Label ==================
-welcome_label = Label(design_frame8, text='Welcome', font=('Arial', 20, 'bold'), bg='#f8f8f8')
-welcome_label.place(x=130, y=15)
+# ===== Bienvenue Label ==================
+Bienvenue_label = Label(design_frame8, text='Bienvenue sur notre application',fg='#1b87d2', font=('Arial', 20, 'bold'), bg='#f8f8f8')
+Bienvenue_label.place(x=100, y=15)
+# Ajouter une étiquette avec le message de bienvenue
+msg_label = tk.Label(design_frame8, text='Bienvenue pour confirmer votre inscription.\n N\'oubliez pas de sauvegarder votre code et \n votre email pour vous connecter.\n Cette option de sign-up est disponible \n  qu\'une seule fois,comme vous utilisez \n l\'application pour  la première fois.', font=('Arial', 8, 'bold'), bg='#f8f8f8')
+msg_label.place(x=0.1, y=250)
+
+# Ajouter un bouton de vérification de la police
+# Ajouter un bouton de vérification de la police
+checkButton_var = tk.BooleanVar()
+checkButton = Checkbutton(design_frame8,fg='red', bg='#f8f8f8', text='Confirmer la police', variable=checkButton_var)
+checkButton.place(x=20, y=350)
+
 
 # ========= Login Button =========
 login_button = Button(RegistrationPage, text='Login', font=("yu gothic ui bold", 12), bg='#f8f8f8', fg="#89898b",
@@ -513,11 +542,11 @@ nameIcon_label.image = photo
 nameIcon_label.place(x=252, y=153)
 
 # ===== picture icon =========
-picture_icon = Image.open('img/pic-icon.png')
+picture_icon = Image.open('img/pic-icon.png').resize((180,100))
 photo = ImageTk.PhotoImage(picture_icon)
 picture_icon_label = Label(design_frame8, image=photo, bg='#f8f8f8')
 picture_icon_label.image = photo
-picture_icon_label.place(x=280, y=5)
+picture_icon_label.place(x=20, y=150)
 
 # ===== Left Side Picture ============
 side_image = Image.open('img/vector.png')
@@ -548,10 +577,11 @@ class AdminWindow:
 
     def __init__(self,parent):
             self.parent = parent
-            self.admin_window = tk.Toplevel(parent)
+            self.admin_window = Toplevel(parent)
             self.admin_window.title("DPETLET")
             self.admin_window.geometry('2200x800')  # Modifié la taille pour mieux s'adapter aux éléments
             self.create_widgets()
+            self.admin_window.iconbitmap('img/aa.ico')
             self.conn = sqlite3.connect(db_file_path)
             self.cursor = self.conn.cursor()
             self.create_tables()
@@ -1014,6 +1044,7 @@ class AdminWindow:
             # Sélectionner automatiquement le premier élément dans le TreeView s'il existe
             if rows:
                 tree.selection_set(tree.get_children()[0])
+            actualiser_base_de_donnees()
 
         # Créer une liaison de sélection au TreeView pour appeler une fonction lorsque la sélection change
         tree.bind("<<TreeviewSelect>>", on_select)
@@ -1082,19 +1113,17 @@ class AdminWindow:
             # Créer une nouvelle fenêtre pour saisir le nom et le prix de la nouvelle produit
             #add_window = tk.Toplevel(root)
             # Créer une nouvelle fenêtre pour saisir le nom, le prix, la quantité et la description de la nouvelle produit
-            add_window = tk.Toplevel(root)
-            add_window.geometry("400x280")
-            add_window.title("Ajouter une produit")
-
-            # Calculer les coordonnées pour centrer la fenêtre sur l'écran
-            window_width = add_window.winfo_reqwidth()
-            window_height = add_window.winfo_reqheight()
-            position_right = int(add_window.winfo_screenwidth() / 2 - window_width / 2)
-            position_down = int(add_window.winfo_screenheight() / 2 - window_height / 2)
-
-            # Définir la position de la fenêtre
-            add_window.geometry("+{}+{}".format(position_right, position_down))
-
+            add_window =Toplevel(root)
+            window_width = 410
+            window_height = 280
+            screen_width = add_window.winfo_screenwidth()
+            screen_height = add_window.winfo_screenheight()
+            position_top = int(screen_height / 4 - window_height / 4)
+            position_right = int(screen_width / 2 - window_width / 2)
+            add_window.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}')
+            add_window.title('Ajouter une produit')
+            add_window.iconbitmap('img/aa.ico')
+            add_window.resizable(0, 0)
             # Titre centré en haut de la fenêtre
             title_label = ttk.Label(add_window, text="Ajouter une produit", font=("Helvetica", 14, "bold"))
             title_label.grid(row=0, column=0, columnspan=2, padx=(70, 20), pady=(10, 20), sticky="nsew")
@@ -1168,9 +1197,17 @@ class AdminWindow:
 
                     if selected_produit:
                        # Créer une nouvelle fenêtre pour modifier le nom, le prix, la quantité et la description du produit sélectionné
-                        modify_window = tk.Toplevel(root)
-                        modify_window.geometry("300x400")
-                        modify_window.title("Modifier une Produit")
+                        modify_window = Toplevel(root)
+                        window_width = 300
+                        window_height = 280
+                        screen_width = modify_window.winfo_screenwidth()
+                        screen_height = modify_window.winfo_screenheight()
+                        position_top = int(screen_height / 4 - window_height / 4)
+                        position_right = int(screen_width / 2 - window_width / 2)
+                        modify_window.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}')
+                        modify_window.title('Modifier une produit')
+                        modify_window.iconbitmap('img/aa.ico')
+                        modify_window.resizable(0, 0)
 
                         # Calculer les coordonnées pour centrer la fenêtre sur l'écran
                         window_width = modify_window.winfo_reqwidth()
@@ -1286,10 +1323,10 @@ class AdminWindow:
                         messagebox.showerror("Erreur", "Produit introuvable.")
                 else:
                     # Afficher un message d'erreur si aucune produit n'est sélectionnée dans la Treeview
-                    messagebox.showerror("Erreur", "Aucune produit sélectionnée.")
+                    messagebox.showerror("Erreur", "Aucun Produit sélectionné.\n Veuillez sélectionner un produit avant de cliquer sur modifier.")
             else:
                 # Afficher un message d'erreur si aucune produit n'est sélectionnée dans la Treeview
-                messagebox.showerror("Erreur", "Aucune produit sélectionnée.")
+                messagebox.showerror("Erreur", "Aucun Produit sélectionné.\n Veuillez sélectionner un produit avant de cliquer sur modifier.")
 
         modify_button = ttk.Button(root, width=20, text="Modifier le Produit", command=modify_produitB)
         modify_button.place(x=5, y=110)
@@ -1319,7 +1356,7 @@ class AdminWindow:
                 for row in rows:
                     tree.insert("", tk.END, values=row)
             else:
-                print("No item selected in Treeview!")
+                messagebox.showerror("Erreur", "Aucun Produit sélectionné.\n Veuillez sélectionner un produit avant de cliquer sur Supprimer.")
                 
 
         delete_button = ttk.Button(root,width=20, text="Supprimer le Produit", command=delete_produit)
@@ -1457,18 +1494,16 @@ class AdminWindow:
             # Créer une nouvelle fenêtre pour saisir le nom et le prix de la nouvelle produit
             # Créer une nouvelle fenêtre pour saisir le nom et le prix du nouvel employé
             add_window =Toplevel(root)
-            add_window.title("Ajouter un Employé")
-            add_window.geometry("430x280")
-
-            # Calculer les coordonnées pour centrer la fenêtre sur l'écran
-            window_width = add_window.winfo_reqwidth()
-            window_height = add_window.winfo_reqheight()
-            position_right = int(add_window.winfo_screenwidth() / 2 - window_width / 2)
-            position_down = int(add_window.winfo_screenheight() / 2 - window_height / 2)
-
-            # Définir la position de la fenêtre
-            add_window.geometry("+{}+{}".format(position_right, position_down))
-
+            window_width = 450
+            window_height = 280
+            screen_width = add_window.winfo_screenwidth()
+            screen_height = add_window.winfo_screenheight()
+            position_top = int(screen_height / 4 - window_height / 4)
+            position_right = int(screen_width / 2 - window_width / 2)
+            add_window.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}')
+            add_window.title('Ajouter un Employé(e)')
+            add_window.iconbitmap('img/aa.ico')
+            add_window.resizable(0, 0)
             # Titre centré en haut de la fenêtre
             title_label = ttk.Label(add_window, text="Ajouter un Employé(e)", font=("Helvetica", 14, "bold"))
             title_label.grid(row=0, column=0, columnspan=2, padx=(90, 20), sticky="nsew")
@@ -1540,7 +1575,7 @@ class AdminWindow:
 
         def search_keyword():
             keyword = combo.get()
-            
+
             # Effacer les résultats précédents dans le TreeView
             tree.delete(*tree.get_children())
             
@@ -1560,6 +1595,7 @@ class AdminWindow:
             # Sélectionner automatiquement le premier élément dans le TreeView s'il existe
             if rows:
                 tree.selection_set(tree.get_children()[0])
+            actualiser_base_de_donneesP()
 
         # Créer une liaison de sélection au TreeView pour appeler une fonction lorsque la sélection change
         tree.bind("<<TreeviewSelect>>", on_select)
@@ -1597,19 +1633,17 @@ class AdminWindow:
                     if selected_employe:
                         # Créer une fenêtre de modification
                         # Créer une nouvelle fenêtre pour modifier les informations de l'employé
-                        modify_window = tk.Toplevel(root)
-                        modify_window.geometry("350x280")
-                        modify_window.title("Modifier un Employé(e)")
-
-                        # Calculer les coordonnées pour centrer la fenêtre sur l'écran
-                        window_width = modify_window.winfo_reqwidth()
-                        window_height = modify_window.winfo_reqheight()
-                        position_right = int(modify_window.winfo_screenwidth() / 2 - window_width / 2)
-                        position_down = int(modify_window.winfo_screenheight() / 2 - window_height / 2)
-
-                        # Définir la position de la fenêtre
-                        modify_window.geometry("+{}+{}".format(position_right, position_down))
-
+                        modify_window = Toplevel(root)
+                        window_width = 350
+                        window_height = 280
+                        screen_width = modify_window.winfo_screenwidth()
+                        screen_height = modify_window.winfo_screenheight()
+                        position_top = int(screen_height / 4 - window_height / 4)
+                        position_right = int(screen_width / 2 - window_width / 2)
+                        modify_window.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}')
+                        modify_window.title('Modifier un Employé(e)')
+                        modify_window.iconbitmap('img/aa.ico')
+                        modify_window.resizable(0, 0)
                         # Titre centré en haut de la fenêtre
                         title_label = ttk.Label(modify_window, text="Modifier un Employé(e)", font=("Helvetica", 14, "bold"))
                         title_label.grid(row=0, column=0, columnspan=2, padx=(85, 20), sticky="nsew")
@@ -1695,10 +1729,10 @@ class AdminWindow:
                         messagebox.showerror("Erreur", "produit introuvable dans la liste d'Produits.")
                 else:
                     # Afficher un message d'erreur si aucune produit n'est sélectionnée dans la Treeview
-                    messagebox.showerror("Erreur", "Aucune produit sélectionnée.")
+                    messagebox.showerror("Erreur", "Aucun Employé(e) sélectionné.\n Veuillez sélectionner un Employé(e) avant de cliquer sur modifier.")
             else:
                 # Afficher un message d'erreur si aucune produit n'est sélectionnée dans la Treeview
-                messagebox.showerror("Erreur", "Aucune produit sélectionnée.")
+                messagebox.showerror("Erreur", "Aucun Employé(e) sélectionné.\n Veuillez sélectionner un Employé(e) avant de cliquer sur modifier.")
 
         modify_button = ttk.Button(root,width=20, text="Modifier un Employé", command=modify_Employe)
         modify_button.place(x=5, y=110)
@@ -1726,7 +1760,7 @@ class AdminWindow:
                 for row in rows:
                     tree.insert("", tk.END, values=row)
             else:
-                print("No item selected in Treeview!")
+                    messagebox.showerror("Erreur", "Aucun Employé(e) sélectionné.\n Veuillez sélectionner un Employé(e) avant de cliquer sur Supprimer.")
                 
 
         delete_produit_button = ttk.Button(root, text="Supprimer un Employé", command=delete_Employe)
@@ -2108,21 +2142,14 @@ class AdminWindow:
         from tkinter import messagebox
         import sqlite3
         from datetime import datetime
-        from reportlab.lib.pagesizes import letter
-        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Image
-        from reportlab.lib import colors
-        from reportlab.lib.styles import getSampleStyleSheet
+        from reportlab.platypus import Spacer
         import random
         import string
-        from reportlab.lib.utils import ImageReader
-        from reportlab.lib.styles import ParagraphStyle
-        from reportlab.platypus import Spacer
-        #root = Toplevel(self.admin_window)
-        #root.title("Sélection du Fournisseur")
-        #root.geometry('2150x320')
-        # Set background color
-        #root.configure(bg='lightblue')
-
+        from reportlab.lib.pagesizes import letter
+        from reportlab.lib import colors
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image, Paragraph, Spacer
+        from reportlab.lib.styles import getSampleStyleSheet
+        import os
         root = Toplevel(self.admin_window)
         window_width = 1000
         window_height = 320
@@ -2166,6 +2193,7 @@ class AdminWindow:
         combo = ttk.Combobox(root, values=[produit[0] for produit in FourniseuCommends])
         combo.place(x=5, y=10)
 
+
         def on_select(event):
             selected_item = tree.selection()[0]  # Obtenir l'élément sélectionné dans le TreeView
             values = tree.item(selected_item, 'values')  # Obtenir les valeurs de l'élément sélectionné
@@ -2204,7 +2232,7 @@ class AdminWindow:
             # Sélectionner automatiquement le premier élément dans le TreeView s'il existe
             if rows:
                 tree.selection_set(tree.get_children()[0])
-
+            actualiser_base_de_donneesF()
         # Créer une liaison de sélection au TreeView pour appeler une fonction lorsque la sélection change
         tree.bind("<<TreeviewSelect>>", on_select)
         populate_combo()
@@ -2279,28 +2307,21 @@ class AdminWindow:
             # Créer une nouvelle fenêtre pour saisir le nom, la quantité et la remarque de la nouvelle produit
             # Créer une nouvelle fenêtre pour saisir le nom, la quantité et la remarque du nouveau produit
             # Créer une nouvelle fenêtre pour saisir le nom, la quantité et la remarque du nouveau produit
-            add_window = tk.Toplevel(root)
-            add_window.geometry("500x200")
-            add_window.title("Ajouter un produit")
-
-            # Calculer les coordonnées pour centrer la fenêtre sur l'écran
-            window_width = add_window.winfo_reqwidth()
-            window_height = add_window.winfo_reqheight()
-            position_right = int(add_window.winfo_screenwidth() / 2 - window_width / 2)
-            position_down = int(add_window.winfo_screenheight() / 2 - window_height / 2)
-
-            # Définir la position de la fenêtre
-            add_window.geometry("+{}+{}".format(position_right, position_down))
-
-            # Ajouter une marge autour du formulaire
-            add_window.grid_rowconfigure(0, weight=1)
-            add_window.grid_rowconfigure(5, weight=1)
-            add_window.grid_columnconfigure(0, weight=1)
-            add_window.grid_columnconfigure(2, weight=1)
+            add_window =Toplevel(root)
+            window_width = 350
+            window_height = 200
+            screen_width = add_window.winfo_screenwidth()
+            screen_height = add_window.winfo_screenheight()
+            position_top = int(screen_height / 4 - window_height / 4)
+            position_right = int(screen_width / 2 - window_width / 2)
+            add_window.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}')
+            add_window.title('Ajouter un produit')
+            add_window.iconbitmap('img/aa.ico')
+            add_window.resizable(0, 0)
 
             # Titre centré en haut de la fenêtre
             title_label = ttk.Label(add_window, text="Ajouter un produit", font=("Helvetica", 14, "bold"))
-            title_label.grid(row=0, column=0, columnspan=2, pady=(10, 20), sticky="nsew")  # Utilisation de sticky pour centrer
+            title_label.grid(row=0, column=0, columnspan=2, padx=(85, 20), sticky="nsew")  # Utilisation de sticky pour centrer
 
             # Utilisation d'une grille pour disposer les éléments de manière plus organisée
             name_label = ttk.Label(add_window, text="Nom du nouveau produit:")
@@ -2340,13 +2361,7 @@ class AdminWindow:
 
 
 
-        import random
-        import string
-        from reportlab.lib.pagesizes import letter
-        from reportlab.lib import colors
-        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image, Paragraph, Spacer
-        from reportlab.lib.styles import getSampleStyleSheet
-        import os
+
         def export_to_pdf():
             # Actualiser les données dans le Treeview
             tree.delete(*tree.get_children())  # Supprimer toutes les lignes actuelles du Treeview
@@ -2474,18 +2489,17 @@ class AdminWindow:
 
                     if selected_produit:
                         # Créer une nouvelle fenêtre pour modifier le nom, la quantité et la remarque du produit sélectionné
-                        modify_window = tk.Toplevel(root)
-                        modify_window.geometry("300x400")
-                        modify_window.title("Modifier une Produit")
-
-                        # Calculer les coordonnées pour centrer la fenêtre sur l'écran
-                        window_width = modify_window.winfo_reqwidth()
-                        window_height = modify_window.winfo_reqheight()
-                        position_right = int(modify_window.winfo_screenwidth() / 2 - window_width / 2)
-                        position_down = int(modify_window.winfo_screenheight() / 2 - window_height / 2)
-
-                        # Définir la position de la fenêtre
-                        modify_window.geometry("+{}+{}".format(position_right, position_down))
+                        modify_window = Toplevel(root)
+                        window_width = 350
+                        window_height = 280
+                        screen_width = modify_window.winfo_screenwidth()
+                        screen_height = modify_window.winfo_screenheight()
+                        position_top = int(screen_height / 4 - window_height / 4)
+                        position_right = int(screen_width / 2 - window_width / 2)
+                        modify_window.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}')
+                        modify_window.title('Modifier une Produit')
+                        modify_window.iconbitmap('img/aa.ico')
+                        modify_window.resizable(0, 0)
 
                         # Ajouter une marge autour du formulaire
                         modify_window.grid_rowconfigure(0, weight=1)
@@ -2495,7 +2509,7 @@ class AdminWindow:
 
                         # Titre centré en haut de la fenêtre
                         title_label = ttk.Label(modify_window, text="Modifier une Produit", font=("Helvetica", 14, "bold"))
-                        title_label.grid(row=0, column=0, columnspan=2, pady=(10, 20), padx=(50, 20), sticky="nsew")  # Utilisation de sticky pour centrer
+                        title_label.grid(row=0, column=0, columnspan=2, padx=(85, 20), sticky="nsew")  # Utilisation de sticky pour centrer
 
                         # Utilisation d'une grille pour disposer les éléments de manière plus organisée
                         name_label = ttk.Label(modify_window, text="Nom actuel:")
@@ -2584,10 +2598,10 @@ class AdminWindow:
                         messagebox.showerror("Erreur", "Produit introuvable.")
                 else:
                     # Afficher un message d'erreur si aucune produit n'est sélectionnée dans la Treeview
-                    messagebox.showerror("Erreur", "Aucune produit sélectionnée.")
+                    messagebox.showerror("Erreur", "Aucun produit sélectionné.\n Veuillez sélectionner un produit avant de cliquer sur modifier.")
             else:
                 # Afficher un message d'erreur si aucune produit n'est sélectionnée dans la Treeview
-                messagebox.showerror("Erreur", "Aucune produit sélectionnée.")
+                messagebox.showerror("Erreur", "Aucun produit sélectionné.\n Veuillez sélectionner un produit avant de cliquer sur modifier .")
         # Fonction pour supprimer une produit sélectionnée
         def delete_produit():
             selected_items = tree.selection()
@@ -2613,7 +2627,7 @@ class AdminWindow:
                 for row in rows:
                     tree.insert("", tk.END, values=row)
             else:
-                print("No item selected in Treeview!")
+                messagebox.showerror("Erreur", "Aucun produit sélectionné.\n Veuillez sélectionner un produit avant de cliquer sur supprimer. ")
 
         def ajouter_produitAustockProdui():
             # Obtenir l'ID de la ligne sélectionnée dans le Treeview
@@ -2723,7 +2737,7 @@ class AdminWindow:
         # Mettre à jour la taille du logo
         logo_image = ImageTk.PhotoImage(Image.open("img/loggo-removebg-preview.png").resize(logo_size))  # Remplacez "chemin_vers_votre_logo" par le chemin de votre logo
         self.admin_canvas.itemconfig(self.logo_label, image=logo_image)
-        self.admin_canvas.coords(self.logo_label, width * 0.08, height * 0.02)  # Ajustez les coordonnées du logo selon vos besoins
+        self.admin_canvas.coords(self.logo_label, width * 0.08, height * 0.03)  # Ajustez les coordonnées du logo selon vos besoins
         self.admin_canvas.image = logo_image  
         #self.admin_canvas.coords(self.clock_label, width * 0.87, 25)
         # Mettre à jour la taille du texte de l'horloge
@@ -2780,6 +2794,7 @@ class AdminWindow:
 
         self.iconQuitter = ImageTk.PhotoImage(Image.open('img/quitter.png').resize(icon_size))
         self.bouton5.config(font=('yu gothic ui', text_font_size, 'bold'),image=self.iconQuitter)
+        #--onefile --noconsole --name='DPETEL1' --icon=img/aa.ico -w --hidden-import=tkcalendar  --hidden-import babel.numbers test3-2.py
 
 
 window.mainloop()
