@@ -1,3 +1,4 @@
+
 from tkinter import *
 from PIL import ImageTk, Image  # type "Pip install pillow" in your terminal to install ImageTk and Image module
 import sqlite3
@@ -11,7 +12,6 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib import colors
 import os
-# Connect to the database
 user_dir = os.path.expanduser('C:/')
 db_file_path = os.path.join(user_dir, 'DataDPTELE','test.db')
 
@@ -85,506 +85,38 @@ def get_fullname_from_database():
     else:
         return None  # Aucun nom complet trouvé dans la base de données
 
-window = Tk()
-window.rowconfigure(0, weight=1)
-window.columnconfigure(0, weight=1)
-window.state('zoomed')
-window.resizable(0, 0)
-icon4 = Image.open('img/iconMini.png')
-icon = ImageTk.PhotoImage(icon4)
+class AdminWindow:
+    # Connect to the database
 
-##icon = PhotoImage(file='img/iconMini.png')
-icon4 = Image.open('img/iconMini.png')
-icon = ImageTk.PhotoImage(icon4)
-window.iconphoto(True, icon)
-#
-# Obtenir le nom complet de la base de données
-fullname = get_fullname_from_database()
-# Mettre à jour le titre de la fenêtre
-if fullname:
-    window.title('Bienvenue ' + fullname)
-else:
-    window.title('Bienvenue')
-# Window Icon Photo
-
-
-LoginPage = Frame(window)
-RegistrationPage = Frame(window)
-
-for frame in (LoginPage, RegistrationPage):
-    frame.grid(row=0, column=0, sticky='nsew')
-
-
-def show_frame(frame):
-    frame.tkraise()
-
-
-show_frame(LoginPage)
-
-from tkinter import StringVar
-
-# Définir les variables textvariables
-Email = StringVar()
-Password = StringVar()
-
-# =====================================================================================================================
-# =====================================================================================================================
-# ==================== LOGIN PAGE =====================================================================================
-# =====================================================================================================================
-# =====================================================================================================================
-from tkinter import messagebox
-
-def login_user():
-    # Récupérer les données entrées dans les champs d'entrée
-    email = email_entry2.get()
-    password = password_entry2.get()
-
-    # Vérifier si les champs d'entrée ne sont pas vides
-    if not email or not password:
-        messagebox.showerror("Login Error", "Veuillez entrer votre email et votre mot de passe.")
-        return
-
-    # Se connecter à la base de données
-    connection = sqlite3.connect(db_file_path)
-    cursor = connection.cursor()
-
-    # Exécuter la requête pour vérifier l'utilisateur dans la base de données
-    cursor.execute('''SELECT * FROM user WHERE email = ? and password= ?''', (email, password))
-    user_data = cursor.fetchall()
-
-    # Fermer la connexion à la base de données
-    connection.close()
-
-    # Vérifier si l'utilisateur a été trouvé dans la base de données
-    if user_data:
-        #messagebox.showinfo("Success", "Connexion réussie!")
-        # Fermer la fenêtre LoginPage
-        window.withdraw()
-        admin_window = AdminWindow(window)
-
-        # Vous pouvez naviguer vers la prochaine page ou effectuer toute autre action ici
-    else:
-        messagebox.showerror("Login Error", "Email ou mot de passe incorrect.")
-
-
-
-
-design_frame1 = Listbox(LoginPage, bg='#0c71b9', width=115, height=50, highlightthickness=0, borderwidth=0)
-design_frame1.place(x=0, y=0)
-
-design_frame2 = Listbox(LoginPage, bg='#1e85d0', width=115, height=50, highlightthickness=0, borderwidth=0)
-design_frame2.place(x=676, y=0)
-
-design_frame3 = Listbox(LoginPage, bg='#1e85d0', width=100, height=33, highlightthickness=0, borderwidth=0)
-design_frame3.place(x=75, y=106)
-
-design_frame4 = Listbox(LoginPage, bg='#f8f8f8', width=100, height=33, highlightthickness=0, borderwidth=0)
-design_frame4.place(x=676, y=106)
-
-# ====== Email ====================
-email_entry2 = Entry(design_frame4, fg="#a7a7a7", font=("yu gothic ui semibold", 12), highlightthickness=2,textvariable=Email)
-email_entry2.place(x=134, y=170, width=256, height=34)
-email_entry2.config(highlightbackground="black", highlightcolor="black")
-email_label2 = Label(design_frame4, text='• Email account', fg="#89898b", bg='#f8f8f8', font=("yu gothic ui", 11, 'bold'))
-email_label2.place(x=130, y=140)
-
-# ==== Password ================== 
-password_entry2 = Entry(design_frame4, fg="#a7a7a7", font=("yu gothic ui semibold", 12), show='•', highlightthickness=2,textvariable=Password)
-password_entry2.place(x=134, y=250, width=256, height=34)
-password_entry2.config(highlightbackground="black", highlightcolor="black")
-password_label2 = Label(design_frame4, text='• Password', fg="#89898b", bg='#f8f8f8', font=("yu gothic ui", 11, 'bold'))
-password_label2.place(x=130, y=220)
-
-
-# function for show and hide password
-def password_command():
-    if password_entry2.cget('show') == '•':
-        password_entry2.config(show='')
-    else:
-        password_entry2.config(show='•')
-
-
-# ====== checkbutton ==============
-checkButton = Checkbutton(design_frame4, bg='#f8f8f8', command=password_command, text='show password')
-checkButton.place(x=140, y=288)
-
-
-# ========= Buttons ===============
-SignUp_button = Button(LoginPage, text='Sign up', font=("yu gothic ui bold", 12), bg='#f8f8f8', fg="#89898b",
-                       command=lambda: show_frame(RegistrationPage), borderwidth=0, activebackground='#1b87d2', cursor='hand2')
-SignUp_button.place(x=1100, y=175)
-
-# ===== Bienvenue Label ==============
-Bienvenue_label = Label(design_frame4, text=' Bienvenue !', font=('Arial', 20, 'bold'), bg='#f8f8f8',fg='#1b87d2')
-Bienvenue_label.place(x=200, y=15)
-
-
-# ======= top Login Button =========
-login_button = Button(LoginPage, text='Login', font=("yu gothic ui bold", 12), bg='#f8f8f8', fg="#89898b",
-                      borderwidth=0,command=login_user, activebackground='#1b87d2', cursor='hand2')
-login_button.place(x=845,  y=175)
-
-login_line = Canvas(LoginPage, width=60, height=5, bg='#1b87d2')
-login_line.place(x=840, y=203)
-#/---------------------------verifier signup------------------------
-connection = sqlite3.connect(db_file_path)
-cursor = connection.cursor()
-# Vérifier s'il existe déjà un utilisateur dans la base de données
-cursor.execute("SELECT COUNT(*) FROM user")
-user_count = cursor.fetchone()[0]
-
-# Si aucun utilisateur n'existe, afficher le bouton d'inscription, sinon ne pas l'afficher
-if user_count == 0:
-    msg_label = tk.Label(design_frame4, text="Vous utilisez l'application pour la première fois. Veuillez vous inscrire.", font=('Arial', 8, 'bold'), bg='#f8f8f8')
-    msg_label.place(x=20, y=450)
-    SignUp_button2 = Button(LoginPage, text='Sign up', font=("yu gothic ui bold", 12), bg='#f8f8f8',fg='#1b87d2',
-                        command=lambda: show_frame(RegistrationPage), borderwidth=0, activebackground='#1b87d2', cursor='hand2')
-    SignUp_button2.place(x=1090, y=550)
-# ==== LOGIN  down button ============
-loginBtn1 = Button(design_frame4, fg='#f8f8f8', text='Login', bg='#1b87d2', font=("yu gothic ui bold", 15),
-                   cursor='hand2',command=login_user, activebackground='#1b87d2')
-loginBtn1.place(x=133, y=340, width=256, height=50)
-
-
-# ======= ICONS =================
-
-# ===== Email icon =========
-email_icon = Image.open('img/email-icon.png')
-photo = ImageTk.PhotoImage(email_icon)
-emailIcon_label = Label(design_frame4, image=photo, bg='#f8f8f8')
-emailIcon_label.image = photo
-emailIcon_label.place(x=105, y=174)
-
-# ===== password icon =========
-password_icon = Image.open('img/pass-icon.png')
-photo = ImageTk.PhotoImage(password_icon)
-password_icon_label = Label(design_frame4, image=photo, bg='#f8f8f8')
-password_icon_label.image = photo
-password_icon_label.place(x=105, y=254)
-
-# ===== picture icon =========
-#picture_icon = Image.open('img/pic-icon.png')
-#photo = ImageTk.PhotoImage(picture_icon)
-#picture_icon_label = Label(design_frame4, image=photo, bg='#f8f8f8')
-#picture_icon_label.image = photo
-#picture_icon_label.place(x=280, y=5)
-
-# ===== Left Side Picture ============
-side_image = Image.open('img/vector.png')
-photo = ImageTk.PhotoImage(side_image)
-side_image_label = Label(design_frame3, image=photo, bg='#1e85d0')
-side_image_label.image = photo
-side_image_label.place(x=50, y=10)
-
-
-# ===================================================================================================================
-# ===================================================================================================================
-# === FORGOT PASSWORD  PAGE =========================================================================================
-# ===================================================================================================================
-# ===================================================================================================================
-
-
-import sqlite3
-from tkinter import Toplevel, Entry, Label, Button, messagebox
-
-def forgot_password():
-    # Créer une nouvelle fenêtre
-    win = Toplevel()
-    window_width = 350
-    window_height = 350
-    screen_width = win.winfo_screenwidth()
-    screen_height = win.winfo_screenheight()
-    position_top = int(screen_height / 4 - window_height / 4)
-    position_right = int(screen_width / 2 - window_width / 2)
-    win.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}')
-    win.title('Forgot Password')
-    #win.iconbitmap('img/aa.ico')
-    
-    #icon = PhotoImage(file='img/iconMini.png')
+    window = Tk()
+    window.rowconfigure(0, weight=1)
+    window.columnconfigure(0, weight=1)
+    window.state('zoomed')
+    window.resizable(0, 0)
     icon4 = Image.open('img/iconMini.png')
     icon = ImageTk.PhotoImage(icon4)
-    win.iconphoto(True, icon)
-    win.configure(background='#f8f8f8')
-    win.resizable(0, 0)
 
-    def update_password():
-        # Récupérer les données saisies par l'utilisateur
-        email = email_entry3.get()
-        new_password = new_password_entry.get()
-        confirm_password = confirm_password_entry3.get()
-
-        # Vérifier si les champs sont vides
-        if not email or not new_password or not confirm_password:
-            messagebox.showerror("Error", "Veuillez remplir tous les champs.")
-            return
-
-        # Vérifier si les mots de passe correspondent
-        if new_password != confirm_password:
-            messagebox.showerror("Error", "Les mots de passe ne correspondent pas.")
-            return
-
-        # Connecter à la base de données
-        connection = sqlite3.connect(db_file_path)
-        cursor = connection.cursor()
-
-        # Vérifier si l'e-mail existe dans la base de données
-        cursor.execute('''SELECT * FROM user WHERE email = ?''', (email,))
-        user_data = cursor.fetchone()
-
-        if user_data:
-            # Mettre à jour le mot de passe
-            cursor.execute('''UPDATE user SET password = ? WHERE email = ?''', (new_password, email))
-            connection.commit()
-            messagebox.showinfo("Success", "Mot de passe mis à jour avec succès.")
-            win.destroy()
-        else:
-            messagebox.showerror("Error", "L'e-mail fourni n'existe pas dans la base de données.")
-
-        # Fermer la connexion à la base de données
-        connection.close()
-
-    # Champ d'entrée pour l'email
-    email_entry3 = Entry(win, fg="#a7a7a7", font=("yu gothic ui semibold", 12), highlightthickness=2)
-    email_entry3.place(x=40, y=30, width=256, height=34)
-    email_entry3.config(highlightbackground="black", highlightcolor="black")
-    email_label3 = Label(win, text='• Email account', fg="#89898b", bg='#f8f8f8', font=("yu gothic ui", 11, 'bold'))
-    email_label3.place(x=40, y=0)
-
-    # Champ d'entrée pour le nouveau mot de passe
-    new_password_entry = Entry(win, fg="#a7a7a7", font=("yu gothic ui semibold", 12), show='•', highlightthickness=2)
-    new_password_entry.place(x=40, y=110, width=256, height=34)
-    new_password_entry.config(highlightbackground="black", highlightcolor="black")
-    new_password_label = Label(win, text='• New Password', fg="#89898b", bg='#f8f8f8', font=("yu gothic ui", 11, 'bold'))
-    new_password_label.place(x=40, y=80)
-
-    # Champ d'entrée pour confirmer le nouveau mot de passe
-    confirm_password_entry3 = Entry(win, fg="#a7a7a7", font=("yu gothic ui semibold", 12), show='•', highlightthickness=2)
-    confirm_password_entry3.place(x=40, y=190, width=256, height=34)
-    confirm_password_entry3.config(highlightbackground="black", highlightcolor="black")
-    confirm_password_label3 = Label(win, text='• Confirm Password', fg="#89898b", bg='#f8f8f8', font=("yu gothic ui", 11, 'bold'))
-    confirm_password_label3.place(x=40, y=160)
-
-    # Bouton pour mettre à jour le mot de passe
-    update_pass = Button(win, fg='#f8f8f8', text='Update Password', bg='#1b87d2', font=("yu gothic ui bold", 14),
-                         cursor='hand2', activebackground='#1b87d2', command=update_password)
-    update_pass.place(x=40, y=240, width=256, height=50)
-
-# Bouton "Forgot password"
-forgotPassword = Button(design_frame4, text='Forgot password',fg='blue', font=("yu gothic ui", 8, "bold underline"), bg='#f8f8f8',
-                        borderwidth=0, activebackground='#f8f8f8', command=forgot_password, cursor="hand2")
-forgotPassword.place(x=290, y=290)
-
-
-
-# =====================================================================================================================
-# =====================================================================================================================
-# =====================================================================================================================
-def register_user():
-    if not checkButton_var.get():
-        messagebox.showerror("Erreur", "Veuillez confirmer la police avant de vous inscrire.")
-        return
-    # Get user input from entry fields
-    full_name = name_entry.get()
-    email = email_entry.get()
-    password = password_entry.get()
-    confirm_password = confirmPassword_entry.get()
-
-    # Check if any of the fields are empty
-    if not full_name or not email or not password or not confirm_password:
-        messagebox.showerror("Empty Fields", "Please fill in all the fields")
-        return
-
-    # Connect to the database
-    connection = sqlite3.connect(db_file_path)
-    cursor = connection.cursor()
-
-    # Check if the email already exists
-    cursor.execute('''SELECT * FROM user WHERE email = ?''', (email,))
-    existing_user = cursor.fetchone()
-    
-    if existing_user:
-        messagebox.showerror("Registration Error", "Email already exists")
+    ##icon = PhotoImage(file='img/iconMini.png')
+    icon4 = Image.open('img/iconMini.png')
+    icon = ImageTk.PhotoImage(icon4)
+    window.iconphoto(True, icon)
+    #
+    # Obtenir le nom complet de la base de données
+    fullname = get_fullname_from_database()
+    # Mettre à jour le titre de la fenêtre
+    if fullname:
+        window.title('Bienvenue ' + fullname)
     else:
-        # Insert user data into the database
-        cursor.execute('''INSERT INTO user (fullname, email, password) VALUES (?, ?, ?)''', (full_name, email, password))
-        connection.commit()
-        messagebox.showinfo("Success", "User registered successfully")
+        window.title('Bienvenue')
+    # Window Icon Photo
 
-    # Close the database connection
-    connection.close()
-
-
-
-# =====================================================================================================================
-# =====================================================================================================================
-# ==================== REGISTRATION PAGE ==============================================================================
-# =====================================================================================================================
-# =====================================================================================================================
-# Supposons que vous avez déjà un curseur de base de données nommé "cursor"
-connection = sqlite3.connect(db_file_path)
-cursor = connection.cursor()
-# Vérifier s'il existe déjà un utilisateur dans la base de données
-cursor.execute("SELECT COUNT(*) FROM user")
-user_count = cursor.fetchone()[0]
-
-# Si aucun utilisateur n'existe, afficher le bouton d'inscription, sinon ne pas l'afficher
-if user_count == 0:
-    SignUp_button.place(x=1100, y=175)
-    
-else:
-    SignUp_button.place_forget()
-
-design_frame5 = Listbox(RegistrationPage, bg='#0c71b9', width=115, height=50, highlightthickness=0, borderwidth=0)
-design_frame5.place(x=0, y=0)
-
-design_frame6 = Listbox(RegistrationPage, bg='#1e85d0', width=115, height=50, highlightthickness=0, borderwidth=0)
-design_frame6.place(x=676, y=0)
-
-design_frame7 = Listbox(RegistrationPage, bg='#1e85d0', width=100, height=33, highlightthickness=0, borderwidth=0)
-design_frame7.place(x=75, y=106)
-
-design_frame8 = Listbox(RegistrationPage, bg='#f8f8f8', width=100, height=33, highlightthickness=0, borderwidth=0)
-design_frame8.place(x=676, y=106)
-
-# ==== Full Name =======
-name_entry = Entry(design_frame8, fg="#a7a7a7", font=("yu gothic ui semibold", 12), highlightthickness=2)
-name_entry.place(x=284, y=150, width=286, height=34)
-name_entry.config(highlightbackground="black", highlightcolor="black")
-name_label = Label(design_frame8, text='•Full Name', fg="#89898b", bg='#f8f8f8', font=("yu gothic ui", 11, 'bold'))
-name_label.place(x=280, y=120)
-
-# ======= Email ===========
-email_entry = Entry(design_frame8, fg="#a7a7a7", font=("yu gothic ui semibold", 12), highlightthickness=2)
-email_entry.place(x=284, y=220, width=286, height=34)
-email_entry.config(highlightbackground="black", highlightcolor="black")
-email_label = Label(design_frame8, text='•Email', fg="#89898b", bg='#f8f8f8', font=("yu gothic ui", 11, 'bold'))
-email_label.place(x=280, y=190)
-
-# ====== Password =========
-password_entry = Entry(design_frame8, fg="#a7a7a7", font=("yu gothic ui semibold", 12), show='•', highlightthickness=2)
-password_entry.place(x=284, y=295, width=286, height=34)
-password_entry.config(highlightbackground="black", highlightcolor="black")
-password_label = Label(design_frame8, text='• Password', fg="#89898b", bg='#f8f8f8',
-                       font=("yu gothic ui", 11, 'bold'))
-password_label.place(x=280, y=265)
-
-
-def password_command2():
-    if password_entry.cget('show') == '•' or confirmPassword_entry.cget('show') == '•':
-        password_entry.config(show='')
-        confirmPassword_entry.config(show='')
-    else:
-        password_entry.config(show='•')
-        confirmPassword_entry.config(show='•')
-
-
-checkButton = Checkbutton(design_frame8, bg='#f8f8f8', command=password_command2, text='show password')
-checkButton.place(x=290, y=330)
-
-
-# ====== Confirm Password =============
-confirmPassword_entry = Entry(design_frame8, fg="#a7a7a7", font=("yu gothic ui semibold", 12), highlightthickness=2)
-confirmPassword_entry.place(x=284, y=385, width=286, height=34)
-confirmPassword_entry.config(highlightbackground="black", highlightcolor="black")
-confirmPassword_label = Label(design_frame8, text='• Confirm Password', fg="#89898b", bg='#f8f8f8',
-                              font=("yu gothic ui", 11, 'bold'))
-confirmPassword_label.place(x=280, y=355)
-
-# ========= Buttons ====================
-
-SignUp_button = Button(RegistrationPage, text='Sign up', font=("yu gothic ui bold", 12), bg='#f8f8f8', fg="#89898b",
-                       command=register_user, borderwidth=0, activebackground='#1b87d2', cursor='hand2')
-SignUp_button.place(x=1100, y=175)
-
-
-SignUp_line = Canvas(RegistrationPage, width=60, height=5, bg='#1b87d2')
-SignUp_line.place(x=1100, y=203)
-
-# ===== Bienvenue Label ==================
-Bienvenue_label = Label(design_frame8, text='Bienvenue sur notre application',fg='#1b87d2', font=('Arial', 20, 'bold'), bg='#f8f8f8')
-Bienvenue_label.place(x=100, y=15)
-# Ajouter une étiquette avec le message de bienvenue
-msg_label = tk.Label(design_frame8, text='Bienvenue pour confirmer votre inscription.\n N\'oubliez pas de sauvegarder votre code et \n votre email pour vous connecter.\n Cette option de sign-up est disponible \n  qu\'une seule fois,comme vous utilisez \n l\'application pour  la première fois.', font=('Arial', 8, 'bold'), bg='#f8f8f8')
-msg_label.place(x=0.1, y=250)
-
-# Ajouter un bouton de vérification de la police
-# Ajouter un bouton de vérification de la police
-checkButton_var = tk.BooleanVar()
-checkButton = Checkbutton(design_frame8,fg='red', bg='#f8f8f8', text='Confirmer la police', variable=checkButton_var)
-checkButton.place(x=20, y=350)
-
-
-# ========= Login Button =========
-login_button = Button(RegistrationPage, text='Login', font=("yu gothic ui bold", 12), bg='#f8f8f8', fg="#89898b",
-                      borderwidth=0, activebackground='#1b87d2', command=lambda: show_frame(LoginPage), cursor='hand2')
-login_button.place(x=845, y=175)
-
-# ==== SIGN UP down button ============
-signUp2 = Button(design_frame8, fg='#f8f8f8', text='Sign Up', bg='#1b87d2', font=("yu gothic ui bold", 15),
-                  command=register_user,cursor='hand2', activebackground='#1b87d2')
-signUp2.place(x=285, y=435, width=286, height=50)
-
-# ===== password icon =========
-password_icon = Image.open('img/pass-icon.png')
-photo = ImageTk.PhotoImage(password_icon)
-password_icon_label = Label(design_frame8, image=photo, bg='#f8f8f8')
-password_icon_label.image = photo
-password_icon_label.place(x=255, y=300)
-
-# ===== confirm password icon =========
-confirmPassword_icon = Image.open('img/pass-icon.png')
-photo = ImageTk.PhotoImage(confirmPassword_icon)
-confirmPassword_icon_label = Label(design_frame8, image=photo, bg='#f8f8f8')
-confirmPassword_icon_label.image = photo
-confirmPassword_icon_label.place(x=255, y=390)
-
-# ===== Email icon =========
-email_icon = Image.open('img/email-icon.png')
-photo = ImageTk.PhotoImage(email_icon)
-emailIcon_label = Label(design_frame8, image=photo, bg='#f8f8f8')
-emailIcon_label.image = photo
-emailIcon_label.place(x=255, y=225)
-
-# ===== Full Name icon =========
-name_icon = Image.open('img/name-icon.png')
-photo = ImageTk.PhotoImage(name_icon)
-nameIcon_label = Label(design_frame8, image=photo, bg='#f8f8f8')
-nameIcon_label.image = photo
-nameIcon_label.place(x=252, y=153)
-
-# ===== picture icon =========
-picture_icon = Image.open('img/pic-icon.png').resize((180,100))
-photo = ImageTk.PhotoImage(picture_icon)
-picture_icon_label = Label(design_frame8, image=photo, bg='#f8f8f8')
-picture_icon_label.image = photo
-picture_icon_label.place(x=20, y=150)
-
-# ===== Left Side Picture ============
-side_image = Image.open('img/vector.png')
-photo = ImageTk.PhotoImage(side_image)
-side_image_label = Label(design_frame7, image=photo, bg='#1e85d0')
-side_image_label.image = photo
-side_image_label.place(x=50, y=10)
-
-
-
-
-# =====================================================================================================================
-# ==================== DATABASE CONNECTION ============================================================================
-# =====================================================================================================================
-# =====================================================================================================================
-
-
-
-
-class AdminWindow:
     #def ouvrir_fenetre_order(self):
        #pass
     #def ouvrir_fenetre_adminEmployes(self):
         #pass
     #def ouvrir_fenetre_adminProduit(self):
         #pass
-    import locale
+
 
     def __init__(self,parent):
             self.parent = parent
@@ -601,10 +133,6 @@ class AdminWindow:
             self.cursor = self.conn.cursor()
             self.create_tables()
             self.close_login_page()
-    def close_login_page(self):
-        # Vérifier si la fenêtre LoginPage est ouverte et la fermer
-        if LoginPage.winfo_exists():
-            LoginPage.destroy()
     def create_tables(self):
 # Création de la table 'produit'
         self.cursor.execute('''CREATE TABLE IF NOT EXISTS Products (
@@ -651,7 +179,7 @@ class AdminWindow:
 
     def create_widgets(self):
         # Background Image
-        bg_image2 = Image.open('img/bb.jpg').resize((2700,980))  # Redimensionner l'image pour s'adapter à la fenêtre
+        bg_image2 = Image.open('img/cover.jpg').resize((2700,900))  # Redimensionner l'image pour s'adapter à la fenêtre
         self.bg_image2 = ImageTk.PhotoImage(bg_image2)
         self.admin_canvas = tk.Canvas(self.admin_window, width=1300, height=700)
         self.admin_canvas.pack(expand=True, fill='both')
@@ -662,95 +190,60 @@ class AdminWindow:
         height = self.admin_window.winfo_height()
 
         # Title
-        self.text_canvas = self.admin_canvas.create_text(width/2, 150, text="Gestion Du Stock", font=('cooper black', 80, 'bold'), fill="#1b87d2")
+        self.text_canvas = self.admin_canvas.create_text(width/2, 150, text="Gestion Du Stock", font=('cooper black', 50, 'bold'), fill="blue")
 
         # Logo
         logo_image = Image.open('img/loggo-removebg-preview.png').resize((140, 140))  # Ajuster la taille du logo
         self.logo_image = ImageTk.PhotoImage(logo_image)
         self.logo_label = self.admin_canvas.create_image(width * 0.15, height * 0.10, anchor=tk.NW, image=self.logo_image)
-        self.text_canvas2 = self.admin_canvas.create_text(width * 0.2, height * 0.15, text="Ministère de l'équipement et de l'eau", font=("yu gothic ui", 5, "bold "), fill="#1b87d2")
-        self.text_canvas3 = self.admin_canvas.create_text(width * 0.2, height * 0.17, text="الماء و التجهيز  وزارة", font=("yu gothic ui", 5, "bold "), fill="#1b87d2")
+        self.text_canvas2 = self.admin_canvas.create_text(width * 0.2, height * 0.15, text="Ministère de l'équipement et de l'eau", font=("yu gothic ui", 5, "bold "), fill="white")
+        self.text_canvas3 = self.admin_canvas.create_text(width * 0.2, height * 0.17, text="الماء و التجهيز  وزارة", font=("yu gothic ui", 5, "bold "), fill="white")
 
         # Clock
-        self.clock_label = self.admin_canvas.create_text(width * 0.5, height * 0.17, text="", font=('cooper black', 12, 'bold'), fill="#1b87d2")
+        self.clock_label = self.admin_canvas.create_text(width * 0.5, height * 0.17, text="", font=('cooper black', 12, 'bold'), fill="white")
         #quitter 
-        #def toggle_buttons():
-            #if self.bouton1Pro.winfo_viewable():
-                #self.bouton1Pro.place_forget()
-                #self.bouton2Empl.place_forget()
-                #self.updateinfopersonnele_button.place_forget()
-            #else:
-                #self.bouton1Pro.place(relx=0.01, rely=0.30)
-                #self.bouton2Empl.place(relx=0.01, rely=0.35)
-                #self.updateinfopersonnele_button.place(relx=0.01, rely=0.40)
+        def toggle_buttons():
+            if self.bouton1.winfo_viewable():
+                self.bouton1.place_forget()
+                self.bouton2.place_forget()
+                self.updateinfopersonnele_button.place_forget()
+            else:
+                self.bouton1.place(relx=0.01, rely=0.30)
+                self.bouton2.place(relx=0.01, rely=0.35)
+                self.updateinfopersonnele_button.place(relx=0.01, rely=0.40)
         
 
 
         self.iconupdateinfopersonnele = ImageTk.PhotoImage(Image.open('img/user_1077012.png').resize((40, 20)))
-        self.updateinfopersonnele_button = Button(self.admin_window, text='compte', bg=self.admin_window.cget('bg'),bd=0, font=("yu gothic ui", 8, "bold "),image=self.iconupdateinfopersonnele,
+        self.updateinfopersonnele_button = Button(self.admin_window, text='compte', font=("yu gothic ui", 8, "bold "),image=self.iconupdateinfopersonnele,
                                             command=lambda: self.updateinfopersonnele(),compound=tk.LEFT)
-        
 
-        #self.icontoggle = ImageTk.PhotoImage(Image.open('img/setting_12439337.png').resize((45, 35)))
-        #self.toggle_button = tk.Button(self.admin_window, text="Accueil", font=('yu gothic ui', 20, 'bold'),width=500, command=toggle_buttons, image=self.icontoggle, compound=tk.LEFT)
-        #self.toggle_button.place(relx=0.85, rely=0.40)
+        self.icontoggle = ImageTk.PhotoImage(Image.open('img/setting_12439337.png').resize((45, 35)))
+        self.toggle_button = tk.Button(self.admin_window, text="Setting▼", font=('yu gothic ui', 12, 'bold'), command=toggle_buttons, image=self.icontoggle, compound=tk.LEFT)
+        self.toggle_button.place(relx=0.85, rely=0.40)
 
-        # Créer la barre d'état
-        self.status_bar = tk.Label(self.admin_window, text="", bd=1, bg='red', relief=tk.SUNKEN, anchor=tk.W)
-        self.status_bar.pack
-
-        # Fonctions pour afficher un message lorsque la souris passe sur le bouton
-        def afficher_message(event):
-            self.status_bar.config(bg='red',text="Cliquez pour accéder aux produits")
-
-        def cacher_message(event):
-            self.status_bar.config(text="")
-
-        # Créer le bouton
         self.iconProduit = ImageTk.PhotoImage(Image.open('img/package.png').resize((45, 20)))
-        self.bouton1Pro = tk.Button(self.admin_window, text="Produits", font=('yu gothic ui', 8, 'bold'), width=205, command=lambda: self.ouvrir_fenetre_adminProduit(), padx=15, image=self.iconProduit, compound=tk.RIGHT)
+        self.bouton1 = tk.Button(self.admin_window, text="Products", font=('yu gothic ui', 8, 'bold'), command=lambda: self.ouvrir_fenetre_adminProduit(), image=self.iconProduit, compound=tk.LEFT)
 
-        # Associer les événements à la fonction afficher_message et cacher_message
-        self.bouton1Pro.bind("<Enter>", afficher_message)
-        self.bouton1Pro.bind("<Leave>", cacher_message)
-        # Créer la barre d'état
-        self.status_bar = tk.Label(self.admin_window, text="", bd=1, relief=tk.SUNKEN, anchor=tk.W)
-        self.status_bar.place(relx=0.250, rely=0.304)
-
-        # Fonctions pour afficher un message lorsque la souris passe sur le bouton
-        def afficher_message(event):
-            self.status_bar.config(text="Cliquez pour accéder aux produits")
-
-        def cacher_message(event):
-            self.status_bar.config(text="")
-
-        # Créer le bouton
-        self.iconProduit = ImageTk.PhotoImage(Image.open('img/package.png').resize((45, 20)))
-        self.bouton1Pro = tk.Button(self.admin_window, text="Produits", font=('yu gothic ui', 8, 'bold'), width=205, command=lambda: self.ouvrir_fenetre_adminProduit(), padx=15, image=self.iconProduit, compound=tk.RIGHT)
-
-        # Associer les événements à la fonction afficher_message et cacher_message
-        self.bouton1Pro.bind("<Enter>", afficher_message)
-        self.bouton1Pro.bind("<Leave>", cacher_message)
         self.iconEmployee = ImageTk.PhotoImage(Image.open('img/employee.png').resize((40, 20)))
-        self.bouton2Empl = tk.Button(self.admin_window, text="Employés", font=('yu gothic ui', 8, 'bold'), width=237, command=lambda: self.ouvrir_fenetre_adminEmployes(),padx=15, image=self.iconEmployee, compound=tk.RIGHT)
+        self.bouton2 = tk.Button(self.admin_window, text="Employés", font=('yu gothic ui', 8, 'bold'),  command=lambda: self.ouvrir_fenetre_adminEmployes(), image=self.iconEmployee, compound=tk.LEFT)
         
         self.iconOrder = ImageTk.PhotoImage(Image.open('img/shopping_2898496.png').resize((50, 35)))
-        self.bouton3Ord = tk.Button(self.admin_window,width=200,height=80, text="Commander", bg=self.admin_window.cget('bg'),bd=0,padx=10, font=('yu gothic ui', 12, 'bold'),  command=lambda: self.ouvrir_fenetre_order(), image=self.iconOrder, compound=tk.LEFT)
-        self.bouton3Ord.place(relx=0.62, rely=0.75)
+        self.bouton3 = tk.Button(self.admin_window, text="Passer commander", font=('yu gothic ui', 12, 'bold'),  command=lambda: self.ouvrir_fenetre_order(), image=self.iconOrder, compound=tk.LEFT)
+        self.bouton3.place(relx=0.62, rely=0.75)
         
         self.iconFournisseur = ImageTk.PhotoImage(Image.open('img/fournisseur.png').resize((50, 35)))
-        self.boutonF = tk.Button(self.admin_window,width=200,height=80, text="Fournisseur", bg=self.admin_window.cget('bg'),bd=0, padx=10,font=('yu gothic ui', 12, 'bold'),  command=lambda: self.ouvrir_fenetre_Fournisseur(), image=self.iconFournisseur, compound=tk.LEFT)
+        self.boutonF = tk.Button(self.admin_window, text="Fournisseur", font=('yu gothic ui', 12, 'bold'),  command=lambda: self.ouvrir_fenetre_Fournisseur(), image=self.iconFournisseur, compound=tk.LEFT)
         self.boutonF.place(relx=0.62, rely=0.75)
+
+
         self.iconHistory = ImageTk.PhotoImage(Image.open('img/shopping-list_10918300.png').resize((40, 35)))
-        self.bouton4Mvt = tk.Button(self.admin_window,width=200,height=80, bg=self.admin_window.cget('bg'), text="les Mouvements",bd=-5,padx=10, font=('yu gothic ui', 12, 'bold'),  command=lambda: self.ouvrir_fenetre_mouvementComend(), image=self.iconHistory, compound=tk.LEFT)
-        self.bouton4Mvt.place(relx=0.85, rely=0.25)
-
-        self.iconstatique = ImageTk.PhotoImage(Image.open('img/quitter.png').resize((40,35)))
-        self.statique = tk.Button(self.admin_window, text="les Statistique", font=('yu gothic ui', 12, 'bold'),padx=15, width=202, command=lambda: self.open_tree_window(), image=self.iconstatique, compound=tk.RIGHT)
-
+        self.bouton4 = tk.Button(self.admin_window, text="les Mouvements", font=('yu gothic ui', 12, 'bold'),  command=lambda: self.ouvrir_fenetre_mouvementComend(), image=self.iconHistory, compound=tk.LEFT)
+        self.bouton4.place(relx=0.85, rely=0.25)
 
         self.iconQuitter = ImageTk.PhotoImage(Image.open('img/quitter.png').resize((40, 35)))
-        self.bouton5 = tk.Button(self.admin_window, text="Quitter", font=('yu gothic ui', 12, 'bold'), bg=self.admin_window.cget('bg'),bd=0,  command=self.admin_window.destroy, image=self.iconQuitter, compound=tk.LEFT)
+        self.bouton5 = tk.Button(self.admin_window, text="Quitter", font=('yu gothic ui', 12, 'bold'),  command=self.admin_window.destroy, image=self.iconQuitter, compound=tk.LEFT)
+        self.bouton5.place(relx=0.95, rely=0.9)
 
 
 
@@ -759,30 +252,50 @@ class AdminWindow:
  
 
 #----------------------------------------------------------------
-        import locale
-#----------------------------------------------------------------
-        def update_clock():
-            locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
-            now = datetime.now().strftime("%A, %B %Y %H:%M:%S")
-            self.admin_canvas.itemconfig(self.clock_label, text=now)
-            self.admin_window.after(1000, update_clock)
+        def update_tree_window(tree):
+            # Se connecter à la base de données
+            conn = sqlite3.connect(db_file_path)
+            cursor = conn.cursor()
 
-        update_clock()
+            # Récupérer les données de la base de données
+            Products = []
+            cursor.execute('SELECT name, Quantite FROM Products')
+            rows = cursor.fetchall()
+            for row in rows:
+                product_name = row[0]
+                quantity = row[1]
+                status = "Disponible" if quantity > 0 else "Indisponible"
+                remaining = quantity if quantity > 0 else 0
+                Products.append((product_name, quantity, status, remaining))
 
-        # Resize event binding
-        self.admin_window.bind('<Configure>', self.resize)
-    #----------------------------------------------------------------
-    def open_tree_window(self, event=None):
-            win = Toplevel()
-            window_width = 1000
-            window_height = 450
-            screen_width = win.winfo_screenwidth()
-            screen_height = win.winfo_screenheight()
-            position_top = int(screen_height / 4 - window_height / 4)
-            position_right = int(screen_width / 2 - window_width / 2)
-            win.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}')
-            win.title('Statistiques Produits')
+            # Effacer les anciennes données du Treeview
+            for item in tree.get_children():
+                tree.delete(item)
 
+            # Insérer les nouvelles données dans le Treeview
+            #for product in Products:
+                #tree.insert("", tk.END, values=product)
+            for product in Products:
+                status_text = product[2]
+                if status_text == "Disponible":
+                    tree.insert("", tk.END, values=product, tags=('green',))
+                elif status_text == "Indisponible":
+                    tree.insert("", tk.END, values=product, tags=('red',))
+                else:
+                    tree.insert("", tk.END, values=product)
+
+            # Définition des couleurs
+            tree.tag_configure('black', foreground='green')
+            tree.tag_configure('red', foreground='red')
+
+            # Fermer la connexion à la base de données
+            conn.close()
+
+            # Planifier une mise à jour périodique après un certain délai (par exemple, toutes les 5 secondes)
+            self.admin_window.after(1000, update_tree_window, tree)
+
+        # Définir la fonction pour ouvrir la fenêtre de l'arbre
+        def open_tree_window():
             # Se connecter à la base de données
             conn = sqlite3.connect(db_file_path)
             cursor = conn.cursor()
@@ -799,35 +312,50 @@ class AdminWindow:
                 Products.append((product_name, quantity, status, remaining))
 
             # Créer le Treeview avec les données récupérées
-            tree = ttk.Treeview(win, columns=('name', 'Quantite', 'Status', 'Reste'), show='headings', height=23)
-            tree.heading('name', text='Nom')
-            tree.heading('Quantite', text='Quantité')
-            tree.heading('Status', text='Statut')
+            tree = ttk.Treeview(self.admin_canvas, columns=('name', 'Quantite', 'Status', 'Reste'), show='headings', height=23)
+            tree.heading('name', text='Name')
+            tree.heading('Quantite', text='Quantite')
+            tree.heading('Status', text='Status')
             tree.heading('Reste', text='Reste')
             for col in tree['columns']:
                 tree.column(col, anchor='center')
-                tree.column(col, anchor='center', width=100)
+            for col in tree['columns']:
+                tree.column(col, anchor='center', width=150)
             # Insérer les données dans le Treeview
             for product in Products:
-                status_text = product[2]
-                if status_text == "Disponible":
-                    tree.insert("", tk.END, values=product, tags=('green',))
-                elif status_text == "Indisponible":
-                    tree.insert("", tk.END, values=product, tags=('red',))
-                else:
-                    tree.insert("", tk.END, values=product)
-
-            # Définition des couleurs
-            tree.tag_configure('green', foreground='green')
-            tree.tag_configure('red', foreground='red')
-
-            tree.pack(fill='both', expand=True)
+                tree.insert("", tk.END, values=product)
 
             # Fermer la connexion à la base de données
             conn.close()
 
+            tree.place(relwidth=0.25, relheight=0.1)
+            def resize_tree(event):
+                        width = event.width
+                        height = event.height
+                        # Réajuster la taille et la position du Treeview en conséquence
+                        tree.place(x=width//4, y=height//4, width=width//2, height=height//2)
+
+        # Placer le Treeview sur le canevas
+                        tree.place(x=width//8, y=height//4, width=width//2, height=height//2)
+
+            # Placer le Treeview sur le canevas
+            #tree.place(x=220, y=100, width=880, height=500)
+            self.admin_canvas.bind('<Configure>', resize_tree)
             # Lancer la mise à jour périodique des données du Treeview
-    #-----------------------------------
+            update_tree_window(tree)
+#----------------------------------------------------------------
+#----------------------------------------------------------------
+        open_tree_window()
+        def update_clock():
+            now = datetime.now().strftime("%A, %B %Y %H:%M:%S")
+            self.admin_canvas.itemconfig(self.clock_label, text=now)
+            self.admin_window.after(1000, update_clock)
+
+        update_clock()
+
+        # Resize event binding
+        self.admin_window.bind('<Configure>', self.resize)
+#----------------------------------------------------------------
 
 
     def updateinfopersonnele(self, event=None):
@@ -2784,15 +2312,15 @@ class AdminWindow:
         height = self.admin_window.winfo_height()
         # Mettre à jour la taille de la police et de l'icône en fonction de la taille de la fenêtre
         text_font_size = int(width * 0.01)  # Ajustez le coefficient selon vos préférences
-        icon_size = (int(width * 0.05), int(width * 0.035)) 
+        icon_size = (int(width * 0.02), int(width * 0.015)) 
         logo_size = int(width * 0.1), int(height * 0.099)
         text_font_sizeM = int(width * 0.008)  # Ajustez le coefficient selon vos préférences
-        text_font_sizeT = int(width * 0.035)  # Ajustez le coefficient selon vos préférences
+        text_font_sizeT = int(width * 0.02)  # Ajustez le coefficient selon vos préférences
 
         # Repositionner les éléments
-        self.admin_canvas.coords(self.text_canvas, width * 0.5, height * 0.25)
-        self.admin_canvas.coords(self.text_canvas2, width * 0.09, height * 0.09)
-        self.admin_canvas.coords(self.text_canvas3, width * 0.08, height * 0.11)
+        self.admin_canvas.coords(self.text_canvas, width * 0.5, height * 0.2)
+        self.admin_canvas.coords(self.text_canvas2, width * 0.13, height * 0.11)
+        self.admin_canvas.coords(self.text_canvas3, width * 0.135, height * 0.13)
         self.admin_canvas.itemconfig(self.text_canvas, font=("cooper black", text_font_sizeT,'bold'))  # Remplacez "votre_police" par votre police
         self.admin_canvas.itemconfig(self.text_canvas2, font=("yu gothic ui", text_font_sizeM,'bold'))
         self.admin_canvas.itemconfig(self.text_canvas3, font=("yu gothic ui", text_font_sizeM,'bold'))
@@ -2801,7 +2329,7 @@ class AdminWindow:
         # Mettre à jour la taille du logo
         logo_image = ImageTk.PhotoImage(Image.open("img/loggo-removebg-preview.png").resize(logo_size))  # Remplacez "chemin_vers_votre_logo" par le chemin de votre logo
         self.admin_canvas.itemconfig(self.logo_label, image=logo_image)
-        self.admin_canvas.coords(self.logo_label, width * 0.04, height * 0.0001)  # Ajustez les coordonnées du logo selon vos besoins
+        self.admin_canvas.coords(self.logo_label, width * 0.08, height * 0.03)  # Ajustez les coordonnées du logo selon vos besoins
         self.admin_canvas.image = logo_image  
         #self.admin_canvas.coords(self.clock_label, width * 0.87, 25)
         # Mettre à jour la taille du texte de l'horloge
@@ -2809,62 +2337,55 @@ class AdminWindow:
         self.admin_canvas.itemconfig(self.clock_label, font=('cooper black', clock_font_size, 'bold'))
 
         # Mettre à jour les coordonnées de l'horloge
-        self.admin_canvas.coords(self.clock_label, width * 0.5, height * 0.05)
-        #self.bouton1Pro.place(relx=0.88, rely=0.35)
-        #self.bouton2Empl.place(relx=0.88, rely=0.3)
-        self.bouton3Ord.place(relx=0.745, rely=0.66)
-        self.bouton4Mvt.place(relx=0.425, rely=0.66)
-        self.bouton5.place(relx=0.9175, rely=0.88)
-        self.boutonF.place(relx=0.125, rely=0.66)
+        self.admin_canvas.coords(self.clock_label, width * 0.87, height * 0.05)
+        #self.bouton1.place(relx=0.88, rely=0.35)
+        #self.bouton2.place(relx=0.88, rely=0.3)
+        self.bouton3.place(relx=0.745, rely=0.86)
+        self.bouton4.place(relx=0.425, rely=0.86)
+        self.bouton5.place(relx=0.925, rely=0.90)
+        self.boutonF.place(relx=0.125, rely=0.86)
+        self.toggle_button.place(relx=0.01, rely=0.25)
+      
+        #self.updateinfopersonnele_button.place(relx=0.85, rely=0.20)
+        # Mettre à jour la taille de la police des boutons
+        self.toggle_button.config(font=('yu gothic ui', text_font_size, 'bold'))
+        # Clock
+        #quitter 
 
-        #self.toggle_button.place(relx=0.300, rely=0.35)
-        self.bouton1Pro.place(relx=0.250, rely=0.302)
-        self.bouton2Empl.place(relx=0.402, rely=0.302)
-        self.statique.place(relx=0.580, rely=0.302)
-
-        self.updateinfopersonnele_button.place(relx=0.928, rely=0.0001)
-
-        #self.toggle_button.config(font=('yu gothic ui', text_font_size, 'bold'))
-        
-        
+        # Mettre à jour la taille de la police des autres boutons
+        # Mettre à jour la taille de l'icône des boutons
         text_font_sizeP = int(width * 0.009)  # Ajustez le coefficient selon vos préférences
-        icon_sizecomp = (int(width * 0.020), int(width * 0.010)) 
+        icon_sizeP = (int(width * 0.031), int(width * 0.015)) 
         self.updateinfopersonnele_button.config(font=("yu gothic ui", text_font_sizeP, "bold"))
-        self.iconupdateinfopersonnele = ImageTk.PhotoImage(Image.open('img/user_1077012.png').resize(icon_sizecomp))
+        self.iconupdateinfopersonnele = ImageTk.PhotoImage(Image.open('img/user_1077012.png').resize(icon_sizeP))
         self.updateinfopersonnele_button.config(image=self.iconupdateinfopersonnele)
     #----------------------------------------------------------------------------------------------------------------------------------------
         
-        #self.icontoggle = ImageTk.PhotoImage(Image.open('img/setting_12439337.png').resize(icon_size))
-        #self.toggle_button.config(image=self.icontoggle)
+        self.icontoggle = ImageTk.PhotoImage(Image.open('img/setting_12439337.png').resize(icon_size))
+        self.toggle_button.config(image=self.icontoggle)
         
-        text_font_sizePr = int(width * 0.010)  # Ajustez le coefficient selon vos préférences
-        icon_sizePr = (int(width * 0.030), int(width * 0.015)) 
+        text_font_sizePr = int(width * 0.009)  # Ajustez le coefficient selon vos préférences
+        icon_sizePr = (int(width * 0.025), int(width * 0.015)) 
         self.iconProduit = ImageTk.PhotoImage(Image.open('img/package.png').resize(icon_sizePr))
-        self.bouton1Pro.config(font=('Arial', text_font_sizeP, 'bold'),image=self.iconProduit)
+        self.bouton1.config(font=('yu gothic ui', text_font_sizePr, 'bold'),image=self.iconProduit)
 
-        text_font_sizeP = int(width * 0.010)  # Ajustez le coefficient selon vos préférences
-        icon_sizeEmp= (int(width * 0.030), int(width * 0.015)) 
+        text_font_sizeP = int(width * 0.009)  # Ajustez le coefficient selon vos préférences
+        icon_sizeEmp= (int(width * 0.022), int(width * 0.015)) 
 
         self.iconEmployee = ImageTk.PhotoImage(Image.open('img/employee.png').resize(icon_sizeEmp))
-        self.bouton2Empl.config(font=('Arial', text_font_sizeP, 'bold'),image=self.iconEmployee)
+        self.bouton2.config(font=('yu gothic ui', text_font_sizeP, 'bold'),image=self.iconEmployee)
         self.iconOrder = ImageTk.PhotoImage(Image.open('img/shopping_2898496.png').resize(icon_size))
-        self.bouton3Ord.config(font=('Arial', text_font_sizePr, 'bold'),image=self.iconOrder)
+        self.bouton3.config(font=('yu gothic ui', text_font_size, 'bold'),image=self.iconOrder)
         
         self.iconFournisseur = ImageTk.PhotoImage(Image.open('img/fournisseur.png').resize(icon_size))
-        self.boutonF.config(font=('Arial', text_font_sizePr, 'bold'),image=self.iconFournisseur)
+        self.boutonF.config(font=('yu gothic ui', text_font_size, 'bold'),image=self.iconFournisseur)
 
 
         self.iconHistory = ImageTk.PhotoImage(Image.open('img/shopping-list_10918300.png').resize(icon_size))
-        self.bouton4Mvt.config(font=('Arial', text_font_sizePr, 'bold'),image=self.iconHistory)
-        
-        
-        icon_sizeq = (int(width * 0.03), int(width * 0.030)) 
-        self.iconQuitter = ImageTk.PhotoImage(Image.open('img/quitter.png').resize(icon_sizeq))
-        self.bouton5.config(font=('yu gothic ui', text_font_size, 'bold'),image=self.iconQuitter)
-#statique
-        self.iconstatique = ImageTk.PhotoImage(Image.open('img/quitter.png').resize(icon_sizeEmp))
-        self.statique.config(font=('Arial', text_font_sizeP, 'bold'),image=self.iconstatique)
+        self.bouton4.config(font=('yu gothic ui', text_font_size, 'bold'),image=self.iconHistory)
 
+        self.iconQuitter = ImageTk.PhotoImage(Image.open('img/quitter.png').resize(icon_size))
+        self.bouton5.config(font=('yu gothic ui', text_font_size, 'bold'),image=self.iconQuitter)
         #--onefile --noconsole --name='DPETEL1' --icon=img/aa.ico -w --hidden-import=tkcalendar  --hidden-import babel.numbers test3-2.py
 
 
